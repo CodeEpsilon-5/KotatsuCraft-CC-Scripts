@@ -18,7 +18,7 @@ end
 local function handleEvents()
     while true do
         print("waiting any event...")
-        local event = os.pullEventRaw(["redstone", "timer", "terminate"])
+        local event = os.pullEventRaw({"redstone", "timer", "terminate"})
         local event_type = event[0]
         print("main event received: ", event_type)
 
