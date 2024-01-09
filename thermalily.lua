@@ -1,7 +1,10 @@
 OUTPUT_SIDE = "left"
 INPUT_SIDE = "right"
 
+
 local current_timer = 0
+local pullEvent = os.pullEvent
+os.pullEvent = os.pullEventRaw
 
 local function closeValve()
     term.setTextColor(colors.red)
@@ -19,7 +22,7 @@ end
 
 local function handleEvents()
     while true do
-        local event = os.pullEventRaw()
+        local event = os.pullEvent()
         local event_type = event[0] or event
 
         if event_type == "redstone" then
@@ -45,7 +48,8 @@ local function handleEvents()
             current_timer = 0
         elseif event_type == "terminate" then
             closeValve()
-            coroutine.yield()
+            os.pullEvent = pullEvent
+            os.queueEvent("terminate")
         end
     end
 end
