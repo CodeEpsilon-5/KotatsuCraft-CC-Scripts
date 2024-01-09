@@ -19,7 +19,7 @@ end
 
 local function handleEvents()
     while true do
-        local event = os.pullEventRaw({"redstone", "timer", "terminate"})
+        local event = os.pullEventRaw()
         local event_type = event[0] or event
 
         if event_type == "redstone" then
