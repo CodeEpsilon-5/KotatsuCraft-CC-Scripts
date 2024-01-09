@@ -17,7 +17,9 @@ end
 
 local function handleEvents()
     while true do
+        print("waiting any event...")
         local event = os.pullEventRaw()
+        print("main event received")
         local event_type = event[0]
 
         if event_type == "redstone" then
@@ -45,7 +47,9 @@ end
 
 local function cooldownCountdown()
     while true do
+        print("waiting cooldown event")
         local event, delay, start_time = os.pullEvent("startcdcountdown")
+        print("cooldown event received")
         local time_elapsed = 0
         term.setTextColor(colors.white)
         term.write("Thermalily Cooldown: ")
