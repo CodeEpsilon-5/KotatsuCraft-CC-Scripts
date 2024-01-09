@@ -34,7 +34,7 @@ local function handleEvents()
                     os.cancelTimer(current_timer)
                 end
                 local delay = (20 * thermalilySignal) + 5
-                print("Waiting ", delay, "s cooldown...")
+                print("Waiting", delay.."s", "cooldown...")
                 current_timer = os.startTimer(delay)
                 os.queueEvent("cooldown", delay, os.time())
             end
