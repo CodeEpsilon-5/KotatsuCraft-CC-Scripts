@@ -1,6 +1,8 @@
 OUTPUT_SIDE = "left"
 INPUT_SIDE = "right"
 
+local current_timer = 0
+
 local function closeValve()
     term.setTextColor(colors.red)
     print("Closing valve")
@@ -17,10 +19,8 @@ end
 
 local function handleEvents()
     while true do
-        print("waiting any event...")
         local event = os.pullEventRaw({"redstone", "timer", "terminate"})
-        local event_type = event[0]
-        print("main event received: ", event_type)
+        local event_type = event[0] or event
 
         if event_type == "redstone" then
             print("Redstone signal changed.")
@@ -30,26 +30,32 @@ local function handleEvents()
                 print("Thermalily Active.")
                 closeValve()
             else
+                if current_timer ~= 0 then
+                    os.cancelTimer(current_timer)
+                end
                 local delay = (20 * thermalilySignal) + 5
                 print("Waiting ", delay, "s cooldown...")
-                os.startTimer(delay)
-                os.queueEvent("startcdcountdown", delay, os.time())
+                current_timer = os.startTimer(delay)
+                os.queueEvent("cooldown", delay, os.time())
             end
         elseif event_type == "timer" then
             local event_id = event[1]
             print("Cooldown over, opening valve...")
             openValve()
+            current_timer = 0
         elseif event_type == "terminate" then
             closeValve()
+            coroutine.yield()
         end
     end
 end
 
 local function cooldownCountdown()
     while true do
-        print("waiting cooldown event")
-        local event, delay, start_time = os.pullEvent("startcdcountdown")
-        print("cooldown event received")
+        local event, delay, start_time = os.pullEvent("cooldown")
+        print(event, " event received: ")
+        print("delay: ", delay)
+        print("start_time: ", start_time)
         local time_elapsed = 0
         term.setTextColor(colors.white)
         term.write("Thermalily Cooldown: ")
@@ -68,5 +74,5 @@ end
 
 openValve()
 
-parallel.waitForAny(handleEvents, cooldownCountdown)
+parallel.waitForAny(handleEvents)
 print("End of Execution")
