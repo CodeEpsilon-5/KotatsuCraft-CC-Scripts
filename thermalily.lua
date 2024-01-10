@@ -89,5 +89,5 @@ end
 
 openValve()
 
-parallel.waitForAny(handleRedstoneEvents, handleTimerEvents, HandleTerminate, cooldownCountdown)
+parallel.waitForAny(handleRedstoneEvents, handleTimerEvents, handleTerminate, cooldownCountdown)
 print("End of Execution")
