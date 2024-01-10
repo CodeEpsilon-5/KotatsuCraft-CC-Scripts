@@ -6,6 +6,8 @@ local current_timer = 0
 local pullEvent = os.pullEvent
 os.pullEvent = os.pullEventRaw
 
+local timer_table = {}
+
 local function closeValve()
     term.setTextColor(colors.red)
     print("Closing valve")
@@ -18,6 +20,46 @@ local function openValve()
     print("Opening valve")
     term.setTextColor(colors.white)
     redstone.setOutput(OUTPUT_SIDE, true)
+end
+
+local function handleRedstoneEvents()
+    while true do
+        local event = os.pullEvent("redstone")
+        print("Redstone signal changed.")
+        local thermalilySignal = redstone.getAnalogInput("right")
+        print("Thermalily signal: ", thermalilySignal)
+        if thermalilySignal == 0 then
+            print("Thermalily Active.")
+            closeValve()
+        else
+            if current_timer ~= 0 then
+                os.cancelTimer(current_timer)
+                timer_table[current_timer] = false
+            end
+            local delay = (20 * thermalilySignal) + 5
+            print("Waiting", delay.."s", "cooldown...")
+            current_timer = os.startTimer(delay)
+            timer_table[id] = true
+            os.queueEvent("cooldown", delay, os.clock())
+        end
+end
+
+local handleTimerEvents()
+    while true do
+        event, id = os.pullEvent("timer")
+        if timer_table[id] then
+            print("Cooldown over, opening valve...")
+            openValve()
+            current_timer = 0
+            timer_table[id] = false
+end
+
+local function handleTerminate()
+    os.pullEvent("terminate")
+    closeValve()
+    os.pullEvent = pullEvent
+    os.queueEvent("terminate")
+    return
 end
 
 local function handleEvents()
@@ -69,6 +111,7 @@ local function cooldownCountdown()
             term.setTextColor(colors.white)
             local cur_x, cur_y = term.getCursorPos()
             term.setCursorPos(1, cur_y)
+            os.startTimer(0.5)
             coroutine.yield()
         end
     end
@@ -76,5 +119,5 @@ end
 
 openValve()
 
-parallel.waitForAny(handleEvents, cooldownCountdown)
+parallel.waitForAny(handleRedstoneEvents, handleTimerEvents, HandleTerminate, cooldownCountdown)
 print("End of Execution")
