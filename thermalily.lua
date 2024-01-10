@@ -57,9 +57,6 @@ end
 local function cooldownCountdown()
     while true do
         local event, delay, start_time = os.pullEvent("cooldown")
-        print(event, "event received: ")
-        print("delay:", delay)
-        print("start_time:", start_time)
         local time_remaining = 1
         term.setTextColor(colors.white)
         while time_remaining > 0 do
