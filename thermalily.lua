@@ -76,6 +76,7 @@ local function cooldownCountdown()
             time_remaining = math.floor(delay - time_elapsed)
             local time_remaining_str = time_remaining .. "s"
             term.setTextColor(colors.blue)
+            term.clearLine()
             term.write("Thermalily Cooldown: "..time_remaining_str)
             term.setTextColor(colors.white)
             local cur_x, cur_y = term.getCursorPos()
