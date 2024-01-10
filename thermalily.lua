@@ -45,7 +45,7 @@ local function handleRedstoneEvents()
     end
 end
 
-local handleTimerEvents()
+local function handleTimerEvents()
     while true do
         event, id = os.pullEvent("timer")
         if timer_table[id] then
