@@ -39,7 +39,7 @@ local function handleEvents()
                 local delay = (20 * thermalilySignal) + 5
                 print("Waiting", delay.."s", "cooldown...")
                 current_timer = os.startTimer(delay)
-                os.queueEvent("cooldown", delay, os.time())
+                os.queueEvent("cooldown", delay, os.clock())
             end
         elseif event_type == "timer" then
             local event_id = event[1]
@@ -57,26 +57,27 @@ end
 local function cooldownCountdown()
     while true do
         local event, delay, start_time = os.pullEvent("cooldown")
-        print(event, " event received: ")
-        print("delay: ", delay)
-        print("start_time: ", start_time)
-        local time_elapsed = 0
+        print(event, "event received: ")
+        print("delay:", delay)
+        print("start_time:", start_time)
+        local time_remaining = 1
         term.setTextColor(colors.white)
-        term.write("Thermalily Cooldown: ")
-        while time_elapsed <= delay do
-            time_elapsed = delay - (os.time() - start_time)
-            local time_elapsed_str = time_elapsed .. "s"
-            local time_elapsed_str_len = string.len(time_elapsed_str)
+        while time_remaining > 0 do
+            local current_time = os.clock()
+            local time_elapsed = current_time - start_time
+            time_remaining = math.floor(delay - time_elapsed)
+            local time_remaining_str = time_remaining .. "s"
             term.setTextColor(colors.blue)
-            term.write(time_elapsed_str_len)
+            term.write("Thermalily Cooldown: "..time_remaining_str.." (Press any key to update)")
             term.setTextColor(colors.white)
             local cur_x, cur_y = term.getCursorPos()
-            term.setCursorPos(cur_x - time_elapsed_str_len, cur_y)
+            term.setCursorPos(1, cur_y)
+            coroutine.yield()
         end
     end
 end
 
 openValve()
 
-parallel.waitForAny(handleEvents)
+parallel.waitForAny(handleEvents, cooldownCountdown)
 print("End of Execution")
