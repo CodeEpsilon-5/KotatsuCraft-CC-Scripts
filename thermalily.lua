@@ -39,7 +39,7 @@ local function handleRedstoneEvents()
             local delay = (20 * thermalilySignal) + 5
             print("Waiting", delay.."s", "cooldown...")
             current_timer = os.startTimer(delay)
-            timer_table[id] = true
+            timer_table[current_timer] = true
             os.queueEvent("cooldown", delay, os.clock())
         end
     end
