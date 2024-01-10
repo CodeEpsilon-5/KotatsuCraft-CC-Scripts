@@ -42,6 +42,7 @@ local function handleRedstoneEvents()
             timer_table[id] = true
             os.queueEvent("cooldown", delay, os.clock())
         end
+    end
 end
 
 local handleTimerEvents()
@@ -52,6 +53,8 @@ local handleTimerEvents()
             openValve()
             current_timer = 0
             timer_table[id] = false
+        end
+    end
 end
 
 local function handleTerminate()
