@@ -26,7 +26,7 @@ local function handleRedstoneEvents()
     while true do
         local event = os.pullEvent("redstone")
         print("Redstone signal changed.")
-        local thermalilySignal = redstone.getAnalogInput("right")
+        local thermalilySignal = redstone.getAnalogInput(INPUT_SIDE)
         print("Thermalily signal: ", thermalilySignal)
         if thermalilySignal == 0 then
             print("Thermalily Active.")
